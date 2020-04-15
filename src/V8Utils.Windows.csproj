@@ -1,5 +1,5 @@
 <!--
-Copyright 2020 Serge Savelev
+Copyright 2020 Sergey Savelev
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ limitations under the License.
         <PackageId>SSavel.V8Utils.Windows</PackageId>
         <PackageVersion>0.5.0-prerelease</PackageVersion>
         <Authors>Serge Savel</Authors>
-        <Copyright>2020 Serge Savelev</Copyright>
+        <Copyright>2020 Sergey Savelev</Copyright>
         <Title>V8Utils.Windows</Title>
         <Description>1C:Enterprise utilities (Windows-specific implementations).</Description>
         <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
