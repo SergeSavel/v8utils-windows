@@ -29,7 +29,6 @@ namespace SSavel.V8Utils.Windows.Platform
 
         [DataMember] public string Name { get; internal set; }
 
-        //[DataMember]
         public string Description { get; internal set; }
 
         public string ConnectionString => $"Srvr=\"{Cluster.Name}:{Cluster.Port.ToString()}\";Ref=\"{Name}\";";
