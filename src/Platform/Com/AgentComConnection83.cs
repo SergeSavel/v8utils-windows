@@ -22,11 +22,10 @@ namespace SSavel.V8Utils.Windows.Platform.Com
 {
     public sealed class AgentComConnection83 : IAgentConnection
     {
-        private readonly Agent _agent;
         private IDictionary<ICluster, IClusterInfo> _clusterInfos;
         private IServerAgentConnection _connection;
 
-        public AgentComConnection83(Agent agent, ComConnector83 connector)
+        public AgentComConnection83(IAgent agent, ComConnector83 connector)
         {
             if (agent == null)
                 throw new ArgumentNullException(nameof(agent));
@@ -34,11 +33,11 @@ namespace SSavel.V8Utils.Windows.Platform.Com
             if (connector == null)
                 throw new ArgumentNullException(nameof(connector));
 
-            _agent = agent;
+            Agent = agent;
             _connection = connector.ComConnector.ConnectAgent(agent.ConnectionString);
         }
 
-        public IAgent Agent => _agent;
+        public IAgent Agent { get; }
 
         public ICollection<ICluster> GetClusters()
         {
@@ -74,7 +73,7 @@ namespace SSavel.V8Utils.Windows.Platform.Com
                     continue;
                 }
 
-                var cluster = new Cluster(_agent)
+                var cluster = new Cluster(Agent)
                     {Host = clusterHost, Port = clusterPort, Name = clusterInfo.ClusterName};
                 result.Add(cluster);
 

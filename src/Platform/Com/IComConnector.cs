@@ -19,6 +19,6 @@ namespace SSavel.V8Utils.Windows.Platform.Com
 {
     public interface IComConnector : IDisposable
     {
-        IAgentConnection ConnectAgent(Agent agent);
+        IAgentConnection ConnectAgent(IAgent agent);
     }
 }

@@ -25,7 +25,7 @@ namespace SSavel.V8Utils.Windows.Platform.Com
         private bool _disposed;
         internal COMConnector ComConnector { get; private set; } = new COMConnector();
 
-        public IAgentConnection ConnectAgent(Agent agent)
+        public IAgentConnection ConnectAgent(IAgent agent)
         {
             if (_disposed)
                 throw new ObjectDisposedException(ToString());
