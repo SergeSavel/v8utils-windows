@@ -9,37 +9,57 @@ namespace SSavel.V8Utils.Windows.Platform
 {
     public class RemoteAdminServer : IDisposable
     {
-        public IAgent Agent { get; }
-        public int Port { get; }
-        
-        private readonly Process _process;
-
         private bool _disposed;
-        
-        public RemoteAdminServer(IAgent agent, int? port = null)
+
+        private Process _process;
+
+        public RemoteAdminServer(IAgent agent, int port)
         {
             Agent = agent ?? throw new ArgumentNullException(nameof(agent));
-            
-            var path = Path.Combine(Path.GetDirectoryName(agent.Path) ?? "", "ras.exe");
-            
+
+            if (port < 1 || port > 65535) throw new ArgumentOutOfRangeException(nameof(port));
+            Port = port;
+
+            Init();
+        }
+
+        public RemoteAdminServer(IAgent agent)
+        {
+            Agent = agent ?? throw new ArgumentNullException(nameof(agent));
+
+            var random = new Random();
+            Port = random.Next(1024, 49151);
+
+            Init();
+        }
+
+        public IAgent Agent { get; }
+        public int Port { get; }
+
+        public void Dispose()
+        {
+            if (_disposed)
+                return;
+
+            if (_process != null)
+            {
+                _process.Dispose();
+                _process = null;
+            }
+
+            _disposed = true;
+        }
+
+        private void Init()
+        {
+            var path = Path.Combine(Path.GetDirectoryName(Agent.Path) ?? "", "ras.exe");
             if (!File.Exists(path)) throw new FileNotFoundException("RAS executable not found", path);
-            
-            if (port.HasValue)
-            {
-                if (port.Value < 1 || port.Value > 65535) throw new ArgumentOutOfRangeException(nameof(port));
-                Port = port.Value;
-            }
-            else
-            {
-                var random = new Random();
-                Port = random.Next(1024, 49151);
-            }
 
             var arguments = string.Join(" ",
                 "cluster",
                 $"--port {Port.ToString(CultureInfo.InvariantCulture)}",
-                $"{agent.Server}:{Agent.Port.ToString(CultureInfo.InvariantCulture)}");
-            
+                $"{Agent.Server}:{Agent.Port.ToString(CultureInfo.InvariantCulture)}");
+
             var psi = new ProcessStartInfo
             {
                 FileName = path,
@@ -56,23 +76,17 @@ namespace SSavel.V8Utils.Windows.Platform
                 psi.StandardOutputEncoding = Encoding.GetEncoding(866);
                 psi.StandardErrorEncoding = Encoding.GetEncoding(866);
             }
-            
+
             _process = Process.Start(psi);
         }
-        
-        public void Dispose()
-        {
-            if (_disposed)
-                return;
-            
-            // _process.StandardInput.WriteLine("\x3");
-            // _process.WaitForExit(1000);
-            // if (!_process.HasExited)
-            //     _process.Kill();
-            
-            _process.Dispose();
 
-            _disposed = true;
+        public void Shutdown()
+        {
+            if (_process == null) return;
+            _process.StandardInput.WriteLine("\x3");
+            _process.WaitForExit(1000);
+            if (!_process.HasExited)
+                _process.Kill();
         }
     }
 }
