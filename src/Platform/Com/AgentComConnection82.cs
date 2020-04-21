@@ -89,7 +89,7 @@ namespace SSavel.V8Utils.Windows.Platform.Com
                 throw new ObjectDisposedException(ToString());
 
             if (_clusterInfos == null || !_clusterInfos.TryGetValue(cluster, out var clusterInfo))
-                throw new ArgumentException("The cluster does not belong to current connection.");
+                throw new ArgumentException("The cluster does not correspond to current connection.");
 
             var items = _connection.GetInfoBases(clusterInfo);
             var result = new List<IInfobase>(items.Length);
@@ -111,7 +111,7 @@ namespace SSavel.V8Utils.Windows.Platform.Com
                 throw new ObjectDisposedException(ToString());
 
             if (_clusterInfos == null || !_clusterInfos.TryGetValue(cluster, out var clusterInfo))
-                throw new ArgumentException("The cluster does not correspond with current connection.");
+                throw new ArgumentException("The cluster does not correspond to current connection.");
 
             var items = _connection.GetSessions(clusterInfo);
             var result = new List<ISession>(items.Length);
