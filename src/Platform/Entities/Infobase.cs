@@ -15,7 +15,7 @@
 using System.Runtime.Serialization;
 using SSavel.V8Utils.Platform;
 
-namespace SSavel.V8Utils.Windows.Platform
+namespace SSavel.V8Utils.Windows.Platform.Entities
 {
     [DataContract]
     public class Infobase : IInfobase

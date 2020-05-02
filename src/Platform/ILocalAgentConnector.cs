@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace SSavel.V8Utils.Windows.Platform.Com
+using System;
+
+namespace SSavel.V8Utils.Windows.Platform
 {
-    public interface IComConnector : ILocalAgentConnector
+    public interface ILocalAgentConnector : IAgentConnector, IDisposable
     {
-        //IAgentConnection ConnectAgent(IAgent agent);
+        //IAgent Agent { get; }
     }
 }

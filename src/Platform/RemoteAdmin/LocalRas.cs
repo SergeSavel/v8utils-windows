@@ -21,34 +21,23 @@ using SSavel.V8Utils.Platform;
 
 namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
 {
-    public class RemoteAdminServer : IDisposable
+    public class LocalRas : Ras, ILocalAgentConnector
     {
         private bool _disposed;
 
         private Process _process;
 
-        public RemoteAdminServer(IAgent agent, int port)
+        public LocalRas(IAgent agent) : base(agent.Server, RandomPort())
         {
-            Agent = agent ?? throw new ArgumentNullException(nameof(agent));
-
-            if (port < 1 || port > 65535) throw new ArgumentOutOfRangeException(nameof(port));
-            Port = port;
-
-            Init();
+            Agent = agent;
         }
 
-        public RemoteAdminServer(IAgent agent)
+        public LocalRas(IAgent agent, int rasPort) : base(agent.Server, rasPort)
         {
-            Agent = agent ?? throw new ArgumentNullException(nameof(agent));
-
-            var random = new Random();
-            Port = random.Next(1024, 49151);
-
-            Init();
+            Agent = agent;
         }
 
-        public IAgent Agent { get; }
-        public int Port { get; }
+        private IAgent Agent { get; }
 
         public void Dispose()
         {
@@ -64,9 +53,17 @@ namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
             _disposed = true;
         }
 
-        private void Init()
+        private static int RandomPort()
         {
-            var path = Path.Combine(Path.GetDirectoryName(Agent.Path) ?? "", "ras.exe");
+            var random = new Random();
+            return random.Next(10240, 49151);
+        }
+
+        private void Init(string path, string server, string port)
+        {
+            if (Directory.Exists(path))
+                path = Path.Combine(path, "ras.exe");
+
             if (!File.Exists(path)) throw new FileNotFoundException("RAS executable not found", path);
 
             var arguments = string.Join(" ",

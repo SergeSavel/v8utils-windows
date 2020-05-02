@@ -21,10 +21,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SSavel.V8Utils.Platform;
+using SSavel.V8Utils.Windows.Platform.Entities;
 
 namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
 {
-    public class RemoteAdminClient : IAgentConnection
+    public class Rac : IAgentConnection
     {
         private const int WaitForExitTimeout = 5000;
         private readonly string _agentRacPath;
@@ -35,7 +36,7 @@ namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
 
         private IDictionary<ICluster, string> _clusterIds;
 
-        public RemoteAdminClient(IAgent agent, string rasServer = "localhost", int rasPort = 1545)
+        public Rac(IAgent agent, string rasServer = "localhost", int rasPort = 1545)
         {
             Agent = agent;
 
@@ -115,61 +116,64 @@ namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
             {
                 var session = new Session(cluster)
                 {
-                    Id = TryParseInt(values, SessionFields.SessionId),
-                    UserName = TryParseString(values, SessionFields.UserName),
-                    Host = TryParseString(values, SessionFields.Host),
-                    AppId = TryParseString(values, SessionFields.AppId),
-                    StartedAt = TryParseDateTime(values, SessionFields.StartedAt),
-                    LastActiveAt = TryParseDateTime(values, SessionFields.LastActiveAt),
-                    BlockedByDbms = TryParseUInt(values, SessionFields.BlockedByDbms),
-                    BlockedByLs = TryParseUInt(values, SessionFields.BlockedByLs),
-                    BytesAll = TryParseULong(values, SessionFields.BytesAll),
-                    BytesLast5Min = TryParseULong(values, SessionFields.BytesLast5Min),
-                    CallsAll = TryParseULong(values, SessionFields.CallsAll),
-                    CallsLast5Min = TryParseULong(values, SessionFields.CallsLast5Min),
-                    DbmsBytesAll = TryParseULong(values, SessionFields.DbmsBytesAll),
-                    DbmsBytesLast5Min = TryParseULong(values, SessionFields.DbmsBytesLast5Min),
-                    DbProcInfo = TryParseString(values, SessionFields.DbProcInfo),
-                    DbProcTook = TryParseLong(values, SessionFields.DbProcTook),
-                    DurationAll = TryParseULong(values, SessionFields.DurationAll),
-                    DurationCurrent = TryParseULong(values, SessionFields.DurationCurrent),
-                    DurationLast5Min = TryParseULong(values, SessionFields.DurationLast5Min),
-                    DbmsDurationAll = TryParseULong(values, SessionFields.DurationAllDbms),
-                    DbmsDurationLast5Min = TryParseULong(values, SessionFields.DurationLast5MinDbms)
+                    Id = Parsers.TryParseInt(values, SessionFields.SessionId),
+                    UserName = Parsers.TryParseString(values, SessionFields.UserName),
+                    Host = Parsers.TryParseString(values, SessionFields.Host),
+                    AppId = Parsers.TryParseString(values, SessionFields.AppId),
+                    StartedAt = Parsers.TryParseDateTime(values, SessionFields.StartedAt),
+                    LastActiveAt = Parsers.TryParseDateTime(values, SessionFields.LastActiveAt),
+                    BlockedByDbms = Parsers.TryParseUInt(values, SessionFields.BlockedByDbms),
+                    BlockedByLs = Parsers.TryParseUInt(values, SessionFields.BlockedByLs),
+                    BytesAll = Parsers.TryParseULong(values, SessionFields.BytesAll),
+                    BytesLast5Min = Parsers.TryParseULong(values, SessionFields.BytesLast5Min),
+                    CallsAll = Parsers.TryParseULong(values, SessionFields.CallsAll),
+                    CallsLast5Min = Parsers.TryParseULong(values, SessionFields.CallsLast5Min),
+                    DbmsBytesAll = Parsers.TryParseULong(values, SessionFields.DbmsBytesAll),
+                    DbmsBytesLast5Min = Parsers.TryParseULong(values, SessionFields.DbmsBytesLast5Min),
+                    DbProcInfo = Parsers.TryParseString(values, SessionFields.DbProcInfo),
+                    DbProcTook = Parsers.TryParseLong(values, SessionFields.DbProcTook),
+                    DurationAll = Parsers.TryParseULong(values, SessionFields.DurationAll),
+                    DurationCurrent = Parsers.TryParseULong(values, SessionFields.DurationCurrent),
+                    DurationLast5Min = Parsers.TryParseULong(values, SessionFields.DurationLast5Min),
+                    DbmsDurationAll = Parsers.TryParseULong(values, SessionFields.DurationAllDbms),
+                    DbmsDurationLast5Min = Parsers.TryParseULong(values, SessionFields.DurationLast5MinDbms)
                 };
 
                 if (values.ContainsKey(SessionFields.DurationCurrentDbms))
-                    session.DbmsDurationCurrent = TryParseULong(values, SessionFields.DurationCurrentDbms);
+                    session.DbmsDurationCurrent = Parsers.TryParseULong(values, SessionFields.DurationCurrentDbms);
                 else if (values.ContainsKey(SessionFields.DurationCurrentDbms2))
-                    session.DbmsDurationCurrent = TryParseULong(values, SessionFields.DurationCurrentDbms2);
+                    session.DbmsDurationCurrent = Parsers.TryParseULong(values, SessionFields.DurationCurrentDbms2);
 
-                var dbProcTookAt = TryParseString(values, SessionFields.DbProcTookAt);
+                var dbProcTookAt = Parsers.TryParseString(values, SessionFields.DbProcTookAt);
                 session.DbProcTookAt =
                     string.IsNullOrEmpty(dbProcTookAt) ? DateTime.MinValue : DateTime.Parse(dbProcTookAt);
 
                 if (Agent.Version >= Versions.V83)
                 {
-                    session.ReadCurrent = TryParseULong(values, SessionFields.ReadCurrent);
-                    session.ReadLast5Min = TryParseULong(values, SessionFields.ReadLast5Min);
-                    session.ReadTotal = TryParseULong(values, SessionFields.ReadTotal);
+                    session.ReadCurrent = Parsers.TryParseULong(values, SessionFields.ReadCurrent);
+                    session.ReadLast5Min = Parsers.TryParseULong(values, SessionFields.ReadLast5Min);
+                    session.ReadTotal = Parsers.TryParseULong(values, SessionFields.ReadTotal);
 
-                    session.WriteCurrent = TryParseULong(values, SessionFields.WriteCurrent);
-                    session.WriteLast5Min = TryParseULong(values, SessionFields.WriteLast5Min);
-                    session.WriteTotal = TryParseULong(values, SessionFields.WriteTotal);
+                    session.WriteCurrent = Parsers.TryParseULong(values, SessionFields.WriteCurrent);
+                    session.WriteLast5Min = Parsers.TryParseULong(values, SessionFields.WriteLast5Min);
+                    session.WriteTotal = Parsers.TryParseULong(values, SessionFields.WriteTotal);
 
-                    session.MemoryCurrent = TryParseLong(values, SessionFields.MemoryCurrent);
-                    session.MemoryLast5Min = TryParseLong(values, SessionFields.MemoryLast5Min);
-                    session.MemoryTotal = TryParseLong(values, SessionFields.MemoryTotal);
+                    session.MemoryCurrent = Parsers.TryParseLong(values, SessionFields.MemoryCurrent);
+                    session.MemoryLast5Min = Parsers.TryParseLong(values, SessionFields.MemoryLast5Min);
+                    session.MemoryTotal = Parsers.TryParseLong(values, SessionFields.MemoryTotal);
                 }
 
-                if (Agent.Version >= Versions.V83_5) session.Hibernate = TryParseBool(values, SessionFields.Hibernate);
+                if (Agent.Version >= Versions.V83_5)
+                    session.Hibernate = Parsers.TryParseBool(values, SessionFields.Hibernate);
 
                 if (Agent.Version >= Versions.V83_12)
                 {
-                    session.ServiceDurationCurrent = TryParseULong(values, SessionFields.DurationCurrentService);
-                    session.ServiceDurationLast5Min = TryParseULong(values, SessionFields.DurationLast5MinService);
-                    session.ServiceDurationTotal = TryParseULong(values, SessionFields.DurationAllService);
-                    session.ServiceCurrent = TryParseString(values, SessionFields.CurrentServiceName);
+                    session.ServiceDurationCurrent =
+                        Parsers.TryParseULong(values, SessionFields.DurationCurrentService);
+                    session.ServiceDurationLast5Min =
+                        Parsers.TryParseULong(values, SessionFields.DurationLast5MinService);
+                    session.ServiceDurationTotal = Parsers.TryParseULong(values, SessionFields.DurationAllService);
+                    session.ServiceCurrent = Parsers.TryParseString(values, SessionFields.CurrentServiceName);
                 }
 
                 if (Agent.Version >= Versions.V83_13)
@@ -355,49 +359,6 @@ namespace SSavel.V8Utils.Windows.Platform.RemoteAdmin
             }
 
             return values.Count == 0 ? null : values;
-        }
-
-        private static string TryParseString(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            return !dict.TryGetValue(key, out var stringValue) ? default : stringValue;
-        }
-
-        private static int TryParseInt(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            if (!dict.TryGetValue(key, out var stringValue)) return default;
-            return !string.IsNullOrWhiteSpace(stringValue) ? int.Parse(stringValue) : default;
-        }
-
-        private static uint TryParseUInt(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            if (!dict.TryGetValue(key, out var stringValue)) return default;
-            return !string.IsNullOrWhiteSpace(stringValue) ? uint.Parse(stringValue) : default;
-        }
-
-        private static long TryParseLong(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            if (!dict.TryGetValue(key, out var stringValue)) return default;
-            return !string.IsNullOrWhiteSpace(stringValue) ? long.Parse(stringValue) : default;
-        }
-
-        private static ulong TryParseULong(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            if (!dict.TryGetValue(key, out var stringValue)) return default;
-            return !string.IsNullOrWhiteSpace(stringValue) ? ulong.Parse(stringValue) : default;
-        }
-
-        private static DateTime TryParseDateTime(IDictionary<string, string> dict, string key,
-            bool throwIfNotFound = true)
-        {
-            if (!dict.TryGetValue(key, out var stringValue)) return default;
-            return !string.IsNullOrWhiteSpace(stringValue) ? DateTime.Parse(stringValue) : default;
-        }
-
-        private static bool TryParseBool(IDictionary<string, string> dict, string key, bool throwIfNotFound = true)
-        {
-            return !dict.TryGetValue(key, out var stringValue)
-                ? default
-                : "yes".Equals(stringValue, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

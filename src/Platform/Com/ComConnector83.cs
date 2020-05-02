@@ -19,7 +19,7 @@ using V83;
 
 namespace SSavel.V8Utils.Windows.Platform.Com
 {
-    public sealed class ComConnector83 : IComConnector
+    public sealed class ComConnector83 : IComConnector, ILocalAgentConnector
     {
         private bool _disposed;
         internal COMConnector ComConnector { get; private set; } = new COMConnector();

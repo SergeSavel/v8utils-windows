@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SSavel.V8Utils.Platform;
 
-namespace SSavel.V8Utils.Windows.Platform
+namespace SSavel.V8Utils.Windows.Platform.Entities
 {
     internal partial class InfobaseDescription
     {

@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SSavel.V8Utils.Platform;
 
-namespace SSavel.V8Utils.Windows.Platform
+namespace SSavel.V8Utils.Windows.Platform.Entities
 {
     [DataContract]
     public class Agent : IAgent

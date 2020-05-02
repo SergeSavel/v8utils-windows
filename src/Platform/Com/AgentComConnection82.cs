@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using SSavel.V8Utils.Platform;
+using SSavel.V8Utils.Windows.Platform.Entities;
 using V82;
 
 namespace SSavel.V8Utils.Windows.Platform.Com

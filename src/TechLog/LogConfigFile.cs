@@ -19,7 +19,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using SSavel.V8Utils.Platform;
 using SSavel.V8Utils.TechLog;
-using SSavel.V8Utils.Windows.Platform;
+using SSavel.V8Utils.Windows.Platform.Entities;
 
 namespace SSavel.V8Utils.Windows.TechLog
 {
