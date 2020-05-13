@@ -125,7 +125,7 @@ namespace SSavel.V8Utils.Windows.Platform.Entities
         {
             var result = new List<Agent>();
 
-            var ports = GetRagentListeningPorts();
+            var ports = GetAgentListeningPorts();
 
             var scServices = ServiceController.GetServices();
             foreach (var sc in scServices)
@@ -145,6 +145,10 @@ namespace SSavel.V8Utils.Windows.Platform.Entities
                 if (path == null)
                     continue;
 
+                var pathMatch = RxPath.Match(path);
+                if (!pathMatch.Success)
+                    continue;
+
                 var agent = new Agent(path);
 
                 agent.ServiceName = sc.ServiceName;
@@ -162,7 +166,7 @@ namespace SSavel.V8Utils.Windows.Platform.Entities
             return result;
         }
 
-        private static ISet<int> GetRagentListeningPorts()
+        private static ISet<int> GetAgentListeningPorts()
         {
             var ports = new HashSet<int>();
             var pids = new HashSet<string>();
