@@ -31,8 +31,8 @@ namespace SSavel.V8Utils.Windows.Platform.Entities
             new Regex(@"(([^""]*\\1C[^""]*\\)(\d+\.\d+\.\d+\.\d+)\\)bin\\ragent\.exe",
                 RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly Regex RxParamQuoted = new Regex(@"^\s*""([^""]*)""\s*", RegexOptions.Compiled);
-        private static readonly Regex RxParamCommon = new Regex(@"^\s*(\S+)\s*", RegexOptions.Compiled);
+        private static readonly Regex RxParamQuoted = new Regex(@"\G\s*""([^""]*)""\s*", RegexOptions.Compiled);
+        private static readonly Regex RxParamCommon = new Regex(@"\G\s*(\S+)\s*", RegexOptions.Compiled);
 
         public Agent(string commandLine)
         {
